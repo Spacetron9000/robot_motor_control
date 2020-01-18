@@ -2,15 +2,18 @@ cmake_minimum_required(VERSION 2.8.3)
 project(motor_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-
+ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  roscpp
   std_msgs
+  nav_msgs
   sensor_msgs
+  tf
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,9 +106,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES motor_control
-#  CATKIN_DEPENDS rospy std_msgs
+  INCLUDE_DIRS include
+  LIBRARIES odometry
+  CATKIN_DEPENDS rospy std_msgs roscpp nav_msgs std_msgs tf
 #  DEPENDS system_lib
 )
 
@@ -116,14 +119,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/motor_control.cpp
-# )
+ add_library(odometry
+   src/converter.cpp
+ )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -135,6 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/motor_control_node.cpp)
 
+add_executable(odometry_node src/wheel_odometry_node.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -146,9 +150,8 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+ target_link_libraries(odometry ${catkin_LIBRARIES})
+ target_link_libraries(odometry_node ${catkin_LIBRARIES} odometry)
 
 #############
 ## Install ##

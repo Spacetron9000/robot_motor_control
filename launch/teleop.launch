@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="port" default="/dev/ttyUSB0"/> 
+    <arg name="port" default="/dev/ttyUSB0"/>
     <group ns="j0">
         <node name="ds4_joystick" pkg="joy" type="joy_node">
                 <param name="dev" value="/dev/input/js0" />
         </node>
     </group>
 
-    <node pkg="topic_tools" name="joy_throttle" type="throttle" args="messages /j0/joy 10.0"/> 
+    <node pkg="topic_tools" name="joy_throttle" type="throttle" args="messages /j0/joy 10.0"/>
     <node pkg="motor_control" name="teleop" type="teleop.py" output="screen"/>
+    <node pkg="motor_control" name="odometry_node" type="odometry_node" output="screen"/>
     <node pkg="rosserial_arduino" name="serial_node" type="serial_node.py">
     <param name="baud" value="115200"/>
     <param name="port" value="$(arg port)"/>
